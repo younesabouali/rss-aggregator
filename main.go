@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"database/sql"
 	"log"
 	"net/http"
 	"os"
@@ -10,8 +11,13 @@ import (
 	"github.com/go-chi/cors"
 	"github.com/joho/godotenv"
 	// "github.com/joho/godotenv"
+	_ "github.com/lib/pq"
+	"github.com/younesabouali/rss-aggregator/internal/database"
 )
 
+type apiConfig struct {
+	DB *database.Queries
+}
 func main() {
 
 	godotenv.Load()
@@ -39,7 +45,16 @@ func main() {
 	srv := &http.Server{
 		Handler: router,
 		Addr:    ":" + port,
+	db_url := os.Getenv("DB_URL")
+	if db_url == "" {
+		log.Fatal("dbURL is not found")
+	}
+	conn, err := sql.Open("postgres", db_url)
+	if err != nil {
+		log.Fatal("Couldn't connect to db")
 	}
 	fmt.Println("server runing on PORT : ", port)
 	srv.ListenAndServe()
+	apiCfg := apiConfig{DB: database.New(conn)}
+	AppRouter(port, apiCfg)
 }
