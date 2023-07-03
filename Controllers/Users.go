@@ -7,6 +7,7 @@ import (
 
 	"github.com/go-chi/chi"
 	"github.com/google/uuid"
+	Middlewares "github.com/younesabouali/rss-aggregator/internal/auth"
 	"github.com/younesabouali/rss-aggregator/internal/database"
 	"github.com/younesabouali/rss-aggregator/utils"
 	jsonformatter "github.com/younesabouali/rss-aggregator/utils"
@@ -31,11 +32,15 @@ func (c UserController) CreateUserHandler(w http.ResponseWriter, r *http.Request
 	}
 	utils.RespondWithJSON(w, 200, createdUser)
 }
+func (c UserController) GetByApiKey(w http.ResponseWriter, r *http.Request, user database.User) {
+	jsonformatter.RespondWithJSON(w, 200, user)
+}
 func UserRouter(DB *database.Queries) *chi.Mux {
+	middlewares := Middlewares.Middlewares{DB: DB}
 	router := chi.NewRouter()
 	userController := UserController{DB: DB}
 	router.Post("/", userController.CreateUserHandler)
-	// router.Get("/", userController.CreateUserHandler)
+	router.Get("/", middlewares.Auth(userController.GetByApiKey))
 	return router
 
 }
