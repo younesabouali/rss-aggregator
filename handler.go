@@ -2,6 +2,8 @@ package main
 
 import (
 	"net/http"
+
+	utils "github.com/younesabouali/rss-aggregator/utils"
 )
 
 type Names struct {
@@ -10,9 +12,9 @@ type Names struct {
 
 func handleReadiness(w http.ResponseWriter, r *http.Request) {
 	Myname := Names{Name: "younes"}
-	respondWithJSON(w, 200, Myname)
+	utils.RespondWithJSON(w, 200, Myname)
 
 }
 func handleErr(w http.ResponseWriter, r *http.Request) {
-	respondWithError(w, 404, "not found")
+	utils.RespondWithError(w, 404, "not found")
 }
