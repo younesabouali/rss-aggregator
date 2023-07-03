@@ -6,10 +6,13 @@ import (
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/cors"
+	"github.com/younesabouali/rss-aggregator/Controllers"
+	DbManager "github.com/younesabouali/rss-aggregator/internal"
 )
 
-func AppRouter(port string, apiConfig apiConfig) {
+func AppRouter(port string) {
 
+	DB := DbManager.Manager()
 	router := chi.NewRouter()
 	router.Use(
 		cors.Handler(
@@ -26,6 +29,9 @@ func AppRouter(port string, apiConfig apiConfig) {
 	v1Router := chi.NewRouter()
 	v1Router.Get("/health", handleReadiness)
 	v1Router.Get("/err", handleErr)
+	// userController := Controllers.UserController{DB: DB}
+	// v1Router.Get("/users", userController.Seed)
+	v1Router.Mount("/users", Controllers.UserRouter(DB))
 	router.Mount("/v1", v1Router)
 	srv := &http.Server{
 		Handler: router,
