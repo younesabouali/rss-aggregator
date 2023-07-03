@@ -1,0 +1,2 @@
+alias mig="cd /app/sql/schema && goose postgres postgres://myuser:stupid-password@172.21.0.5/rssagg up"
+alias run="go build && ./rss-aggregator"
