@@ -1,4 +1,4 @@
-package main
+package utils
 
 import (
 	"encoding/json"
@@ -6,7 +6,15 @@ import (
 	"net/http"
 )
 
-func respondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
+func Parser[T interface{}](r *http.Request, e T) (T, error) {
+	err := json.NewDecoder(r.Body).Decode(&e)
+	if err != nil {
+		return e, err
+	}
+	return e, nil
+
+}
+func RespondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
 	data, err := json.Marshal(payload)
 
 	if err != nil {
@@ -21,13 +29,13 @@ func respondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
 
 }
 
-func respondWithError(w http.ResponseWriter, code int, msg string) {
+func RespondWithError(w http.ResponseWriter, code int, msg string) {
 	if code > 499 {
 		log.Println("Responded with 500 error ", msg)
 	}
 	type responseError struct {
 		Error string `json:"error"`
 	}
-	respondWithJSON(w, code, responseError{Error: msg})
+	RespondWithJSON(w, code, responseError{Error: msg})
 
 }
