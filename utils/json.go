@@ -2,14 +2,15 @@ package utils
 
 import (
 	"encoding/json"
+	"errors"
 	"log"
 	"net/http"
 )
 
-func Parser[T interface{}](r *http.Request, e T) (T, error) {
+func BodyParser[T interface{}](r *http.Request, e T) (T, error) {
 	err := json.NewDecoder(r.Body).Decode(&e)
 	if err != nil {
-		return e, err
+		return e, errors.New("Couldn't parse params")
 	}
 	return e, nil
 

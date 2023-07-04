@@ -21,7 +21,7 @@ func (c UserController) CreateUserHandler(w http.ResponseWriter, r *http.Request
 	type userParams struct {
 		Name string
 	}
-	result, err := jsonformatter.Parser(r, userParams{})
+	result, err := jsonformatter.BodyParser(r, userParams{})
 	if err != nil {
 		jsonformatter.RespondWithError(w, 400, "couldn't parse user")
 		return
