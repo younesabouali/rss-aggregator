@@ -32,6 +32,7 @@ func AppRouter(port string) {
 	// userController := Controllers.UserController{DB: DB}
 	// v1Router.Get("/users", userController.Seed)
 	v1Router.Mount("/users", Controllers.UserRouter(DB))
+	v1Router.Mount("/feeds", Controllers.FeedRouter(DB))
 	router.Mount("/v1", v1Router)
 	srv := &http.Server{
 		Handler: router,
