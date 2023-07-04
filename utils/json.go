@@ -5,8 +5,21 @@ import (
 	"errors"
 	"log"
 	"net/http"
+	"strconv"
 )
 
+func ParseInt32(stringifiedNumber string) (int32, error) {
+	params, err := strconv.ParseInt(stringifiedNumber, 10, 32)
+	if err != nil {
+		return 0, err
+	}
+	e := int32(params)
+	return e, err
+}
+func UrlParamsParser(r *http.Request, fieldName string) string {
+	return r.URL.Query().Get(fieldName)
+
+}
 func BodyParser[T interface{}](r *http.Request, e T) (T, error) {
 	err := json.NewDecoder(r.Body).Decode(&e)
 	if err != nil {
@@ -19,7 +32,6 @@ func RespondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
 	data, err := json.Marshal(payload)
 
 	if err != nil {
-		log.Printf("Failed to marshal JSON %v", payload)
 		w.WriteHeader(500)
 		return
 	}
