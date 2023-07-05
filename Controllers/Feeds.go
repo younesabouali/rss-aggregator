@@ -67,13 +67,7 @@ func (fc FeedController) getAllFeeds(w http.ResponseWriter, r *http.Request) {
 		utils.RespondWithError(w, 404, "Unable to perform search")
 		return
 	}
-
-	if feed != nil {
-		utils.RespondWithJSON(w, 200, feed)
-		return
-	}
-	var emptyFeed [0]int
-	utils.RespondWithJSON(w, 200, emptyFeed)
+	utils.RespondWithJSON(w, 200, feed)
 }
 
 func FeedRouter(DB *database.Queries) *chi.Mux {

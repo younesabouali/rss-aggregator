@@ -28,18 +28,24 @@ func BodyParser[T interface{}](r *http.Request, e T) (T, error) {
 	return e, nil
 
 }
+func RespondWithArrayJSON[T interface{}](w http.ResponseWriter, code int, payload []T) {
+	if payload != nil {
+		RespondWithJSON(w, code, payload)
+		return
+	}
+
+	var empyFollow [0]int
+	RespondWithJSON(w, code, empyFollow)
+}
 func RespondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
 	data, err := json.Marshal(payload)
-
 	if err != nil {
 		w.WriteHeader(500)
 		return
 	}
-
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(code)
 	w.Write(data)
-
 }
 
 func RespondWithError(w http.ResponseWriter, code int, msg string) {
