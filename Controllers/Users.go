@@ -16,6 +16,8 @@ import (
 type UserController struct {
 	DB *database.Queries
 }
+type Controller interface {
+}
 
 func (c UserController) CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 	type userParams struct {
@@ -35,10 +37,14 @@ func (c UserController) CreateUserHandler(w http.ResponseWriter, r *http.Request
 func (c UserController) GetByApiKey(w http.ResponseWriter, r *http.Request, user database.User) {
 	jsonformatter.RespondWithJSON(w, 200, user)
 }
-func UserRouter(DB *database.Queries) *chi.Mux {
+func InitializeDependencies(DB *database.Queries) (Middlewares.Middlewares, *chi.Mux) {
 	middlewares := Middlewares.Middlewares{DB: DB}
 	router := chi.NewRouter()
-	userController := UserController{DB: DB}
+	return middlewares, router
+}
+func UserRouter(DB *database.Queries) *chi.Mux {
+	userController := UserController{DB}
+	middlewares, router := InitializeDependencies(DB)
 	router.Post("/", userController.CreateUserHandler)
 	router.Get("/", middlewares.Auth(userController.GetByApiKey))
 	return router
