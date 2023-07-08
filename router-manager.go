@@ -7,12 +7,11 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/go-chi/cors"
 	"github.com/younesabouali/rss-aggregator/Controllers"
-	DbManager "github.com/younesabouali/rss-aggregator/internal"
+	"github.com/younesabouali/rss-aggregator/internal/database"
 )
 
-func AppRouter(port string) {
+func AppRouter(port string, DB *database.Queries) {
 
-	DB := DbManager.Manager()
 	router := chi.NewRouter()
 	router.Use(
 		cors.Handler(
