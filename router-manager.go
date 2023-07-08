@@ -33,6 +33,7 @@ func AppRouter(port string, DB *database.Queries) {
 	v1Router.Mount("/feed_follows", Controllers.FollowRouter(DB))
 	v1Router.Mount("/users", Controllers.UserRouter(DB))
 	v1Router.Mount("/feeds", Controllers.FeedRouter(DB))
+	v1Router.Mount("/posts", Controllers.PostRouter(DB))
 	router.Mount("/v1", v1Router)
 	srv := &http.Server{
 		Handler: router,
