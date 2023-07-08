@@ -69,7 +69,7 @@ func (q *Queries) FollowFeed(ctx context.Context, arg FollowFeedParams) (FeedFol
 }
 
 const getFollowedFeed = `-- name: GetFollowedFeed :many
-SELECT feed_follows.id, created_at, updated_at, feed_follows.user_id, feed_id, feeds.id, createdat, updatedat, name, url, feeds.user_id FROM feed_follows RIGHT JOIN feeds ON feed_follows.feed_id = feeds.id WHERE feed_follows.user_id=$1 LIMIT $2 OFFSET $3
+SELECT feed_follows.id, created_at, updated_at, feed_follows.user_id, feed_id, feeds.id, createdat, updatedat, name, url, feeds.user_id, last_fetched_at FROM feed_follows RIGHT JOIN feeds ON feed_follows.feed_id = feeds.id WHERE feed_follows.user_id=$1 LIMIT $2 OFFSET $3
 `
 
 type GetFollowedFeedParams struct {
@@ -79,17 +79,18 @@ type GetFollowedFeedParams struct {
 }
 
 type GetFollowedFeedRow struct {
-	ID        uuid.NullUUID
-	CreatedAt sql.NullTime
-	UpdatedAt sql.NullTime
-	UserID    uuid.NullUUID
-	FeedID    uuid.NullUUID
-	ID_2      uuid.UUID
-	Createdat time.Time
-	Updatedat time.Time
-	Name      string
-	Url       string
-	UserID_2  uuid.UUID
+	ID            uuid.NullUUID
+	CreatedAt     sql.NullTime
+	UpdatedAt     sql.NullTime
+	UserID        uuid.NullUUID
+	FeedID        uuid.NullUUID
+	ID_2          uuid.UUID
+	Createdat     time.Time
+	Updatedat     time.Time
+	Name          string
+	Url           string
+	UserID_2      uuid.UUID
+	LastFetchedAt sql.NullTime
 }
 
 func (q *Queries) GetFollowedFeed(ctx context.Context, arg GetFollowedFeedParams) ([]GetFollowedFeedRow, error) {
@@ -113,6 +114,7 @@ func (q *Queries) GetFollowedFeed(ctx context.Context, arg GetFollowedFeedParams
 			&i.Name,
 			&i.Url,
 			&i.UserID_2,
+			&i.LastFetchedAt,
 		); err != nil {
 			return nil, err
 		}
